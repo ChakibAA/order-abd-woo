@@ -83,46 +83,88 @@ function get_from_data()
 }
 
 
-
-// Save ata
 add_action('wp_ajax_save_data_order_abd', 'save_data_order_abd');
 add_action('wp_ajax_nopriv_save_data_order_abd', 'save_data_order_abd');
 
-
 function save_data_order_abd()
 {
-    // if (isset($_POST['data'])) {
-    $new_post = array(
-        'post_title' => 'New Post Title',
-        'post_content' => 'Post content goes here.',
-        'post_type' => 'Order_abds',
-        // Your custom post type
-        'post_status' => 'publish',
-        // You can use 'draft' if you want to save it as a draft
-    );
+    if (isset($_POST['data'])) {
+        $data = json_encode($_POST['data']);
 
-    $post_id = wp_insert_post($new_post);
+        $new_order_abd_post = array(
+            'post_title' => generate_order_abd_title(),
+            'post_content' => 'Your post content goes here.',
+            'post_type' => 'order_abd',
+            'post_status' => 'publish',
+        );
 
-    update_post_meta($post_id, '_json_data', sanitize_text_field($_POST['data']));
-    // }
-    echo "chakib";
+
+        $new_post_id = wp_insert_post($new_order_abd_post);
+
+        if ($new_post_id) {
+
+            update_post_meta($new_post_id, 'order_info', sanitize_text_field($data));
+
+
+            echo "New 'Order_abd'  created with ID: $new_post_id";
+
+        } else {
+
+            echo "Failed to create a new 'Order_abd'.";
+        }
+
+    }
+    wp_die();
+
 }
 
+function generate_order_abd_title()
+{
+    global $wpdb;
+
+    $query = "SELECT MAX(CAST(post_title AS SIGNED)) FROM $wpdb->posts WHERE post_type = 'order_abd'";
+
+    $max_number = $wpdb->get_var($query);
+
+    // If there are no existing posts, start from 1
+    $new_number = $max_number ? $max_number + 1 : 1;
+
+    $new_title = $new_number;
+
+    return $new_title;
+}
 
 
 // Add a custom meta box for JSON input
-function add_json_meta_box()
+function add_data_meta_box($post)
 {
-    add_meta_box('json_data_meta_box', 'JSON Data', 'render_json_meta_box', 'order_abd', 'normal', 'high');
+    add_meta_box(
+        'order_info',
+        'Order Information',
+        'order_info_callback',
+        'order_abd',
+        // Votre nom de type de publication personnalisé
+        'normal',
+        'high'
+    );
 }
 
-// Render the JSON meta box
-function render_json_meta_box($post)
+function order_info_callback($post)
 {
-    $json_data = get_post_meta($post->ID, '_json_data', true);
-    ?>
-    <textarea name="json_data" rows="10" cols="50"><?php echo esc_textarea($json_data); ?></textarea>
-    <?php
+    // Récupérez les données existantes
+    $order_info = get_post_meta($post->ID, 'order_info', true);
+
+    $array = json_decode($order_info, true);
+
+    echo '<label for="order_info">Order Information:</label>';
+
+    foreach ($array as $key => $value) {
+        echo '<label for="order_info">' . $key . '</label>';
+
+        echo '<textarea id="order_info" name="order_info" rows="4" style="width: 100%;">' . $value . '</textarea>';
+
+    }
+
 }
 
-add_action('add_meta_boxes', 'add_json_meta_box');
+add_action('add_meta_boxes', 'add_data_meta_box');

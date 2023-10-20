@@ -1,3 +1,11 @@
+// jQuery(document).ready(function ($) {
+//     $(window).on('beforeunload', function () {
+//         // Code to execute before the user leaves the page
+//         return "Are you sure you want to leave?";
+//     });
+// });
+
+
 function get_data_from_form() {
 
     var filledInputs = {};
@@ -20,7 +28,6 @@ function get_data_from_form() {
         }
     });
 
-    console.log(filledInputs);
     return filledInputs;
 }
 
