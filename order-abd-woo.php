@@ -86,6 +86,7 @@ function get_from_data()
 add_action('wp_ajax_save_data_order_abd', 'save_data_order_abd');
 add_action('wp_ajax_nopriv_save_data_order_abd', 'save_data_order_abd');
 
+// Save data 
 function save_data_order_abd()
 {
     if (isset($_POST['data'])) {
@@ -117,6 +118,7 @@ function save_data_order_abd()
 
 }
 
+// Get title for new order-abd
 function generate_order_abd_title()
 {
     global $wpdb;
@@ -134,7 +136,7 @@ function generate_order_abd_title()
 }
 
 
-// Add a custom meta box for JSON input
+// Add a custom meta box for DATA input
 function add_data_meta_box($post)
 {
     add_meta_box(
@@ -142,7 +144,6 @@ function add_data_meta_box($post)
         'Order Information',
         'order_info_callback',
         'order_abd',
-        // Votre nom de type de publication personnalisé
         'normal',
         'high'
     );
@@ -155,13 +156,10 @@ function order_info_callback($post)
 
     $array = json_decode($order_info, true);
 
-
-
+    // UI Data
     foreach ($array as $key => $value) {
-        echo '<label for="order_info">' . $key . '</label>';
-
-        echo '<textarea id="order_info" name="order_info" rows="4" style="width: 100%;">' . $value . '</textarea>';
-
+        echo '<label for="order_info"><strong>' . $key . '</strong></label>';
+        echo '<input readonly type="text" id="order_info" name="order_info" style="width: 100%;" value="' . $value . '">';
     }
 
 }
