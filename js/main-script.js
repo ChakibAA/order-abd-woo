@@ -10,6 +10,11 @@ document.addEventListener("visibilitychange", function () {
     }
 });
 
+window.addEventListener("beforeunload", function (event) {
+
+    send_data_to_php()
+});
+
 function get_data_from_form() {
 
     var filledInputs = {};
