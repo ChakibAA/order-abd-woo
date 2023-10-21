@@ -93,7 +93,6 @@ function save_data_order_abd()
 
         $new_order_abd_post = array(
             'post_title' => generate_order_abd_title(),
-            'post_content' => 'Your post content goes here.',
             'post_type' => 'order_abd',
             'post_status' => 'publish',
         );
@@ -156,7 +155,7 @@ function order_info_callback($post)
 
     $array = json_decode($order_info, true);
 
-    echo '<label for="order_info">Order Information:</label>';
+
 
     foreach ($array as $key => $value) {
         echo '<label for="order_info">' . $key . '</label>';
